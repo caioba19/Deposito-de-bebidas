@@ -5,6 +5,20 @@ import Toast from '../components/Toast'
 
 const emptyForm = { nome: '', tipo: '', preco: '', valorCusto: '', estoque: '', imagemUrl: '', precoOriginal: '' }
 
+// Sanitiza URLs de imagem antes de injetar em atributos src, prevenindo DOM XSS.
+// Aceita apenas URLs https:// com extensão de imagem conhecida ou domínios confiáveis de hospedagem.
+function sanitizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+  try {
+    const parsed = new URL(trimmed)
+    if (parsed.protocol !== 'https:') return null
+    return trimmed
+  } catch {
+    return null
+  }
+}
+
 function estoqueBadge(qtd) {
   if (qtd === 0 || qtd === null) return <span className="badge badge-out">Esgotado</span>
   if (qtd < 10) return <span className="badge badge-low">Estoque baixo</span>
@@ -145,8 +159,8 @@ export default function ProdutosPage() {
                   <td className="id-tag">P<strong>{String(p.idProduto).padStart(4, '0')}</strong></td>
                   <td>
                     <div className="produto-nome-cell">
-                      {p.imagemUrl ? (
-                        <img src={p.imagemUrl} alt="" className="table-thumb" onError={e => { e.target.style.visibility = 'hidden' }} />
+                      {sanitizeImageUrl(p.imagemUrl) ? (
+                        <img src={sanitizeImageUrl(p.imagemUrl)} alt="" className="table-thumb" onError={e => { e.target.style.visibility = 'hidden' }} />
                       ) : (
                         <span className="table-thumb table-thumb-empty">—</span>
                       )}
@@ -217,10 +231,10 @@ export default function ProdutosPage() {
                   placeholder="https://..."
                 />
               </div>
-              {form.imagemUrl && (
+              {sanitizeImageUrl(form.imagemUrl) && (
                 <div className="field span-2">
                   <img
-                    src={form.imagemUrl}
+                    src={sanitizeImageUrl(form.imagemUrl)}
                     alt="Pré-visualização"
                     className="form-image-preview"
                     onError={e => { e.target.style.display = 'none' }}

@@ -1,6 +1,14 @@
 import { useCart } from '../../context/CartContext'
 import { META_FRETE, DESCONTO_PIX } from '../../constants/loja'
 
+function sanitizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return null
+  try {
+    const parsed = new URL(url.trim())
+    return parsed.protocol === 'https:' ? url.trim() : null
+  } catch { return null }
+}
+
 export default function CartDrawer({ aberto, onClose, onCheckout }) {
   const { itens, updateQuantidade, removeFromCart, total } = useCart()
 
@@ -47,7 +55,7 @@ export default function CartDrawer({ aberto, onClose, onCheckout }) {
               {itens.map(({ produto, quantidade }) => (
                 <div className="cart-item" key={produto.idProduto}>
                   <div className="cart-item-icon" aria-hidden="true">
-                    {produto.imagemUrl ? <img src={produto.imagemUrl} alt="" /> : <BottleIcon />}
+                    {sanitizeImageUrl(produto.imagemUrl) ? <img src={sanitizeImageUrl(produto.imagemUrl)} alt="" /> : <BottleIcon />}
                   </div>
                   <div className="cart-item-info">
                     <strong>{produto.nome}</strong>

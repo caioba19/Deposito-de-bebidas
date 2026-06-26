@@ -8,6 +8,15 @@ import CheckoutModal from '../components/store/CheckoutModal'
 import Toast from '../components/Toast'
 import './LojaPage.css'
 
+// Sanitiza URLs de imagem — aceita apenas https:// para prevenir injeção de javascript: URLs
+function sanitizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return null
+  try {
+    const parsed = new URL(url.trim())
+    return parsed.protocol === 'https:' ? url.trim() : null
+  } catch { return null }
+}
+
 export default function LojaPage() {
   const [produtos, setProdutos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -117,9 +126,9 @@ export default function LojaPage() {
                   )}
 
                   <div className="produto-card-visual">
-                    {p.imagemUrl ? (
+                    {sanitizeImageUrl(p.imagemUrl) ? (
                       <img
-                        src={p.imagemUrl}
+                        src={sanitizeImageUrl(p.imagemUrl)}
                         alt={p.nome}
                         className="produto-card-img"
                         onError={e => {
@@ -128,7 +137,7 @@ export default function LojaPage() {
                         }}
                       />
                     ) : null}
-                    <div className="produto-card-icon-fallback" style={{ display: p.imagemUrl ? 'none' : 'flex' }}>
+                    <div className="produto-card-icon-fallback" style={{ display: sanitizeImageUrl(p.imagemUrl) ? 'none' : 'flex' }}>
                       <BottleIcon />
                     </div>
                   </div>
