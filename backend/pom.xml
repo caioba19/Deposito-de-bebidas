@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.4.7</version>
         <relativePath/>
     </parent>
 
@@ -20,6 +20,9 @@
 
     <properties>
         <java.version>17</java.version>
+        <!-- Força mysql-connector-j 9.3.0 pra fechar CWE-276 (Incorrect Default Permissions)
+             reportado pelo Snyk — o Spring Boot BOM ainda usa 9.1.0 -->
+        <mysql-connector-j.version>9.3.0</mysql-connector-j.version>
     </properties>
 
     <dependencies>

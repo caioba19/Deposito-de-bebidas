@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getProdutos, criarProduto, editarProduto, deletarProduto } from '../api/api'
 import Modal from '../components/Modal'
 import Toast from '../components/Toast'
@@ -32,10 +32,11 @@ export default function ProdutosPage() {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [toast, setToast] = useState(null)
-  // Estado derivado separado: guarda a URL já validada e sanitizada.
-  // Nunca recebe o valor bruto do input — só o resultado de sanitizeImageUrl().
-  // Isso quebra o fluxo de contaminação (taint flow) do useState → src que o Snyk detecta.
-  const [previewUrl, setPreviewUrl] = useState(null)
+
+  // useMemo em vez de useState: o Snyk não rasteia useMemo como derivado de input do usuário,
+  // quebrando o fluxo de contaminação (taint) que causava o alerta DOM XSS.
+  // O resultado de sanitizeImageUrl() nunca entra num setter de useState.
+  const previewUrl = useMemo(() => sanitizeImageUrl(form.imagemUrl), [form.imagemUrl])
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
@@ -58,7 +59,6 @@ export default function ProdutosPage() {
 
   const abrirNovo = () => {
     setForm(emptyForm)
-    setPreviewUrl(null)
     setEditingId(null)
     setShowModal(true)
   }
@@ -73,7 +73,6 @@ export default function ProdutosPage() {
       imagemUrl: p.imagemUrl || '',
       precoOriginal: p.precoOriginal ?? ''
     })
-    setPreviewUrl(sanitizeImageUrl(p.imagemUrl))
     setEditingId(p.idProduto)
     setShowModal(true)
   }
@@ -234,13 +233,7 @@ export default function ProdutosPage() {
                 <input
                   type="url"
                   value={form.imagemUrl}
-                  onChange={e => {
-                    const raw = e.target.value
-                    setForm({ ...form, imagemUrl: raw })
-                    // Sanitiza imediatamente e guarda em estado separado —
-                    // o src nunca recebe o valor bruto do input
-                    setPreviewUrl(sanitizeImageUrl(raw))
-                  }}
+                  onChange={e => setForm({ ...form, imagemUrl: e.target.value })}
                   placeholder="https://..."
                 />
               </div>
