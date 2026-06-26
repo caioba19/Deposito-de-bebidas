@@ -57,13 +57,49 @@ export default function ClientesPage() {
     setShowModal(true)
   }
 
+  const extrairApenasNumeros = (val) => {
+    if (!val || typeof val !== 'string') return null
+    const numeros = val.replace(/\D/g, '')
+    return numeros || null
+  }
+
+  const mascararCpf = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`
+  }
+
+  const mascararCep = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length <= 5) return digits
+    return `${digits.slice(0, 5)}-${digits.slice(5, 8)}`
+  }
+
+  const mascararTelefone = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length === 0) return ''
+    if (digits.length <= 2) return `(${digits}`
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`
+  }
+
+  const formatarCpf = (cpf) => {
+    if (!cpf) return '—'
+    const limpo = cpf.replace(/\D/g, '')
+    if (limpo.length !== 11) return cpf
+    return limpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  }
+
   const salvar = async (e) => {
     e.preventDefault()
     // Campos vazios viram null (evita colisão na constraint UNIQUE do cpf quando vazio)
     const payload = {
       ...form,
       dataNascimento: form.dataNascimento || null,
-      cpf: form.cpf?.trim() || null,
+      cpf: extrairApenasNumeros(form.cpf),
       telefone: form.telefone?.trim() || null,
       endereco: form.endereco?.trim() || null,
       cep: form.cep?.trim() || null,
@@ -137,7 +173,7 @@ export default function ClientesPage() {
                 <tr key={c.idCliente}>
                   <td className="id-tag">C<strong>{String(c.idCliente).padStart(4, '0')}</strong></td>
                   <td>{c.nome}</td>
-                  <td className="mono-num">{c.cpf || '—'}</td>
+                  <td className="mono-num">{formatarCpf(c.cpf)}</td>
                   <td className="mono-num">{c.telefone || '—'}</td>
                   <td>{c.endereco || '—'}</td>
                   <td style={{ textAlign: 'right' }}>
@@ -157,7 +193,7 @@ export default function ClientesPage() {
             <div className="form-grid">
               <div className="field span-2">
                 <label>Nome completo</label>
-                <input required value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
+                <input required maxLength={100} value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
               </div>
               <div className="field">
                 <label>Data de nascimento</label>
@@ -165,19 +201,19 @@ export default function ClientesPage() {
               </div>
               <div className="field">
                 <label>CPF</label>
-                <input value={form.cpf} onChange={e => setForm({ ...form, cpf: e.target.value })} placeholder="000.000.000-00" />
+                <input maxLength={14} value={form.cpf} onChange={e => setForm({ ...form, cpf: mascararCpf(e.target.value) })} placeholder="000.000.000-00" />
               </div>
               <div className="field">
                 <label>Telefone</label>
-                <input value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })} placeholder="(00) 00000-0000" />
+                <input maxLength={15} value={form.telefone} onChange={e => setForm({ ...form, telefone: mascararTelefone(e.target.value) })} placeholder="(00) 00000-0000" />
               </div>
               <div className="field">
                 <label>CEP</label>
-                <input value={form.cep} onChange={e => setForm({ ...form, cep: e.target.value })} />
+                <input maxLength={9} value={form.cep} onChange={e => setForm({ ...form, cep: mascararCep(e.target.value) })} placeholder="00000-000" />
               </div>
               <div className="field span-2">
                 <label>Endereço</label>
-                <input value={form.endereco} onChange={e => setForm({ ...form, endereco: e.target.value })} />
+                <input maxLength={150} value={form.endereco} onChange={e => setForm({ ...form, endereco: e.target.value })} />
               </div>
             </div>
             <div className="form-actions">

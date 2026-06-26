@@ -207,11 +207,11 @@ export default function ProdutosPage() {
             <div className="form-grid">
               <div className="field span-2">
                 <label>Nome do produto</label>
-                <input required value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
+                <input required maxLength={100} value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
               </div>
               <div className="field span-2">
                 <label>Tipo</label>
-                <input value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} placeholder="Ex: Cerveja, Refrigerante..." />
+                <input maxLength={50} value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} placeholder="Ex: Cerveja, Refrigerante..." />
               </div>
               <div className="field">
                 <label>Preço de venda (R$)</label>
@@ -238,6 +238,7 @@ export default function ProdutosPage() {
                 <label>URL da foto do produto</label>
                 <input
                   type="url"
+                  maxLength={500}
                   value={form.imagemUrl}
                   onChange={e => setForm({ ...form, imagemUrl: e.target.value })}
                   placeholder="https://..."

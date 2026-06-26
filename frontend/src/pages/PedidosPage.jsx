@@ -86,9 +86,11 @@ export default function PedidosPage() {
       setShowModal(false)
       carregar()
     } catch (err) {
-      const msg = typeof err.response?.data === 'string'
-        ? err.response.data
-        : 'Erro ao criar pedido.'
+      const dados = err.response?.data
+      const msg = typeof dados === 'string'
+        ? dados
+        : dados?.mensagem || (dados && typeof dados === 'object' ? Object.values(dados)[0] : null)
+        || 'Erro ao criar pedido.'
       showToast(msg, 'error')
     }
   }

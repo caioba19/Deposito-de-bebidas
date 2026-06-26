@@ -17,13 +17,42 @@ export default function CheckoutModal({ onClose, onPedidoConfirmado }) {
   const descontoPix = total * DESCONTO_PIX
   const totalComDesconto = total - descontoPix
 
+  const extrairApenasNumeros = (val) => {
+    if (!val || typeof val !== 'string') return null
+    const numeros = val.replace(/\D/g, '')
+    return numeros || null
+  }
+
+  const mascararCpf = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`
+  }
+
+  const mascararCep = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length <= 5) return digits
+    return `${digits.slice(0, 5)}-${digits.slice(5, 8)}`
+  }
+
+  const mascararTelefone = (val) => {
+    const digits = val.replace(/\D/g, '')
+    if (digits.length === 0) return ''
+    if (digits.length <= 2) return `(${digits}`
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`
+  }
+
   const buscarOuCriarCliente = async () => {
-    const cpfLimpo = form.cpf?.trim() || null
+    const cpfLimpo = extrairApenasNumeros(form.cpf)
 
     // Evita CPF duplicado: se já existe um cliente com esse CPF, reaproveita o cadastro
     if (cpfLimpo) {
       const res = await getClientes()
-      const existente = res.data.find(c => c.cpf?.trim() === cpfLimpo)
+      const existente = res.data.find(c => extrairApenasNumeros(c.cpf) === cpfLimpo)
       if (existente) return existente.idCliente
     }
 
@@ -114,23 +143,23 @@ export default function CheckoutModal({ onClose, onPedidoConfirmado }) {
         <div className="form-grid" style={{ marginTop: 22 }}>
           <div className="field span-2">
             <label>Nome completo</label>
-            <input required value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
+            <input required maxLength={100} value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} />
           </div>
           <div className="field">
             <label>CPF</label>
-            <input value={form.cpf} onChange={e => setForm({ ...form, cpf: e.target.value })} placeholder="000.000.000-00" />
+            <input maxLength={14} value={form.cpf} onChange={e => setForm({ ...form, cpf: mascararCpf(e.target.value) })} placeholder="000.000.000-00" />
           </div>
           <div className="field">
             <label>Telefone</label>
-            <input value={form.telefone} onChange={e => setForm({ ...form, telefone: e.target.value })} placeholder="(00) 00000-0000" />
+            <input maxLength={15} value={form.telefone} onChange={e => setForm({ ...form, telefone: mascararTelefone(e.target.value) })} placeholder="(00) 00000-0000" />
           </div>
           <div className="field span-2">
             <label>Endereço de entrega</label>
-            <input value={form.endereco} onChange={e => setForm({ ...form, endereco: e.target.value })} />
+            <input maxLength={150} value={form.endereco} onChange={e => setForm({ ...form, endereco: e.target.value })} />
           </div>
           <div className="field">
             <label>CEP</label>
-            <input value={form.cep} onChange={e => setForm({ ...form, cep: e.target.value })} />
+            <input maxLength={9} value={form.cep} onChange={e => setForm({ ...form, cep: mascararCep(e.target.value) })} placeholder="00000-000" />
           </div>
         </div>
 
