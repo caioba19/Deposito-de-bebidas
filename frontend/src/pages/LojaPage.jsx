@@ -93,10 +93,18 @@ export default function LojaPage() {
   const carregarProdutos = () => {
     setLoading(true)
     getProdutos()
-      .then(res => setProdutos(res.data))
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setProdutos(res.data)
+        } else {
+          setProdutos([])
+          setToast({ message: 'Erro ao carregar dados do catálogo.', type: 'error' })
+        }
+      })
       .catch(() => setToast({ message: 'Não foi possível carregar o catálogo agora.', type: 'error' }))
       .finally(() => setLoading(false))
   }
+
 
   useEffect(() => {
     carregarProdutos()

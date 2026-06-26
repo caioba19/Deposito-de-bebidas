@@ -26,15 +26,16 @@ export default function PedidosPage() {
       const [resPedidos, resClientes, resProdutos] = await Promise.all([
         getPedidos(), getClientes(), getProdutos()
       ])
-      setPedidos(resPedidos.data)
-      setClientes(resClientes.data)
-      setProdutos(resProdutos.data)
+      setPedidos(Array.isArray(resPedidos.data) ? resPedidos.data : [])
+      setClientes(Array.isArray(resClientes.data) ? resClientes.data : [])
+      setProdutos(Array.isArray(resProdutos.data) ? resProdutos.data : [])
     } catch {
       showToast('Erro ao carregar dados.', 'error')
     } finally {
       setLoading(false)
     }
   }
+
 
   useEffect(() => { carregar() }, [])
 

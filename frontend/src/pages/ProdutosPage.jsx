@@ -47,13 +47,19 @@ export default function ProdutosPage() {
     setLoading(true)
     try {
       const res = await getProdutos()
-      setProdutos(res.data)
+      if (Array.isArray(res.data)) {
+        setProdutos(res.data)
+      } else {
+        setProdutos([])
+        showToast('Erro ao processar produtos.', 'error')
+      }
     } catch {
       showToast('Erro ao carregar produtos.', 'error')
     } finally {
       setLoading(false)
     }
   }
+
 
   useEffect(() => { carregar() }, [])
 

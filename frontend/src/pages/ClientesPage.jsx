@@ -22,13 +22,19 @@ export default function ClientesPage() {
     setLoading(true)
     try {
       const res = await getClientes()
-      setClientes(res.data)
+      if (Array.isArray(res.data)) {
+        setClientes(res.data)
+      } else {
+        setClientes([])
+        showToast('Erro ao processar clientes.', 'error')
+      }
     } catch {
       showToast('Erro ao carregar clientes.', 'error')
     } finally {
       setLoading(false)
     }
   }
+
 
   useEffect(() => { carregar() }, [])
 
