@@ -59,6 +59,7 @@ next-env.d.ts
 .openclaude
 .antigravitycli
 .playwright-mcp
+.agents
 
 # Database backups & local SQLite files
 *.db
