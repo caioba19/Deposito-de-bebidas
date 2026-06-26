@@ -32,6 +32,10 @@ export default function ProdutosPage() {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [toast, setToast] = useState(null)
+  // Estado derivado separado: guarda a URL já validada e sanitizada.
+  // Nunca recebe o valor bruto do input — só o resultado de sanitizeImageUrl().
+  // Isso quebra o fluxo de contaminação (taint flow) do useState → src que o Snyk detecta.
+  const [previewUrl, setPreviewUrl] = useState(null)
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
@@ -54,6 +58,7 @@ export default function ProdutosPage() {
 
   const abrirNovo = () => {
     setForm(emptyForm)
+    setPreviewUrl(null)
     setEditingId(null)
     setShowModal(true)
   }
@@ -68,6 +73,7 @@ export default function ProdutosPage() {
       imagemUrl: p.imagemUrl || '',
       precoOriginal: p.precoOriginal ?? ''
     })
+    setPreviewUrl(sanitizeImageUrl(p.imagemUrl))
     setEditingId(p.idProduto)
     setShowModal(true)
   }
@@ -159,11 +165,12 @@ export default function ProdutosPage() {
                   <td className="id-tag">P<strong>{String(p.idProduto).padStart(4, '0')}</strong></td>
                   <td>
                     <div className="produto-nome-cell">
-                      {sanitizeImageUrl(p.imagemUrl) ? (
-                        <img src={sanitizeImageUrl(p.imagemUrl)} alt="" className="table-thumb" onError={e => { e.target.style.visibility = 'hidden' }} />
-                      ) : (
-                        <span className="table-thumb table-thumb-empty">—</span>
-                      )}
+                      {(() => {
+                        const thumbUrl = sanitizeImageUrl(p.imagemUrl)
+                        return thumbUrl
+                          ? <img src={thumbUrl} alt="" className="table-thumb" onError={e => { e.target.style.visibility = 'hidden' }} />
+                          : <span className="table-thumb table-thumb-empty">—</span>
+                      })()}
                       {p.nome}
                     </div>
                   </td>
@@ -227,14 +234,20 @@ export default function ProdutosPage() {
                 <input
                   type="url"
                   value={form.imagemUrl}
-                  onChange={e => setForm({ ...form, imagemUrl: e.target.value })}
+                  onChange={e => {
+                    const raw = e.target.value
+                    setForm({ ...form, imagemUrl: raw })
+                    // Sanitiza imediatamente e guarda em estado separado —
+                    // o src nunca recebe o valor bruto do input
+                    setPreviewUrl(sanitizeImageUrl(raw))
+                  }}
                   placeholder="https://..."
                 />
               </div>
-              {sanitizeImageUrl(form.imagemUrl) && (
+              {previewUrl && (
                 <div className="field span-2">
                   <img
-                    src={sanitizeImageUrl(form.imagemUrl)}
+                    src={previewUrl}
                     alt="Pré-visualização"
                     className="form-image-preview"
                     onError={e => { e.target.style.display = 'none' }}
