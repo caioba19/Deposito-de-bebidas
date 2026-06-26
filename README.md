@@ -18,8 +18,10 @@ As duas interfaces compartilham o mesmo backend e banco de dados; o checkout da 
 ```
 deposito-bebidas/
 ├── backend/        # API REST em Spring Boot
-├── frontend/        # Interface em React (loja + painel admin)
-└── database/        # Script SQL de criação do banco
+├── frontend/       # Interface em React (loja + painel admin)
+├── database/       # Script SQL de criação do banco
+└── extras/         # Materiais adicionais e pendências do projeto
+
 ```
 
 ---
@@ -125,6 +127,5 @@ mysql -u root -p < database/schema.sql
 - Devolução de estoque ao excluir/estornar um pedido.
 - Trava de concorrência (lock) no desconto de estoque: hoje, dois pedidos simultâneos para o mesmo produto, em alta concorrência, poderiam disputar a mesma unidade em estoque sem trava pessimista. Suficiente para uso sequencial/demonstração; relevante apenas em cenário de múltiplos usuários simultâneos.
 - Autenticação/login (tanto para clientes da loja quanto para a equipe do admin — hoje qualquer um que acesse `/admin` consegue gerenciar os dados).
-- Fotos reais de produto: a loja usa um ícone ilustrativo no lugar de foto, já que o banco não tem uma coluna de imagem.
 - "Meus pedidos" para o cliente da loja consultar pedidos anteriores (hoje não há login, então não há como vincular um cliente que retorna à sua sessão).
 - Paginação nas listagens.

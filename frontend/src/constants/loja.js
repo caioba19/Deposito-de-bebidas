@@ -1,5 +1,6 @@
-// Configurações de exibição da loja (frete grátis, desconto no Pix).
-// Centralizadas aqui para evitar importação circular entre LojaPage e os componentes do carrinho.
+// Configuracoes visuais e comerciais da loja publica.
+// O backend salva os itens com preco cheio; desconto/frete aqui sao apenas exibicao do frontend.
 
-export const META_FRETE = 150.0
-export const DESCONTO_PIX = 0.05 // 5% — valor de exibição do próprio projeto, não vem do backend
+export const META_FRETE = 199.0
+export const DESCONTO_PIX = 0.05
+
