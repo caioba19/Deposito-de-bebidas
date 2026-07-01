@@ -1,3 +1,4 @@
+// Classe principal com @SpringBootApplication é só o "botão liga" da aplicação, o ponto de entrada que o Spring usa pra subir o servidor. 
 package com.deposito;
 
 import org.springframework.boot.SpringApplication;

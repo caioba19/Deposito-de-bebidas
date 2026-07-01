@@ -1,3 +1,4 @@
+//  É o único que tem regra de negócio real (agregação de itens repetidos, validação de estoque, transação).
 package com.deposito.controller;
 
 import com.deposito.dto.PedidoRequest;

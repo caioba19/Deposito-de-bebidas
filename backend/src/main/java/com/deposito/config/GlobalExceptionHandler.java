@@ -1,3 +1,4 @@
+// Mostra tratamento de erro centralizado. Ponto bom pra citar como "boa prática"
 package com.deposito.config;
 
 import org.springframework.dao.DataIntegrityViolationException;

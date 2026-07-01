@@ -1,3 +1,4 @@
+// Mais simples que Pedido, mas mostra os mesmos conceitos (@Entity, @Id, Bean Validation)
 package com.deposito.model;
 
 import jakarta.persistence.*;

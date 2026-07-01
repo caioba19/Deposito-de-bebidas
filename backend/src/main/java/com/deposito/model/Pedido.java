@@ -1,3 +1,6 @@
+//O relacionamento @OneToMany / @ManyToOne entre eles é o ponto mais "acadêmico" 
+// do projeto  mostra que vocês entenderam modelagem de relacionamento no JPA, 
+// não só uma tabela solta. O @JsonIgnore pra evitar loop infinito também é um detalhe bom de citar.
 package com.deposito.model;
 
 import jakarta.persistence.*;

@@ -1,3 +1,4 @@
+// Todos são a mesma ideia (extends JpaRepository).
 package com.deposito.repository;
 
 import com.deposito.model.ItemPedido;

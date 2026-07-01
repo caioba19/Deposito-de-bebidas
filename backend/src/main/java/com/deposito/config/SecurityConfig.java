@@ -1,3 +1,4 @@
+//  explica CORS (por que o front consegue falar com o back) e por que o CSRF foi desabilitado com justificativa.
 package com.deposito.config;
 
 import org.springframework.context.annotation.Bean;

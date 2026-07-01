@@ -1,3 +1,5 @@
+//  é o formato que o frontend manda (clienteId + lista de itens), diferente da entidade 
+// Pedido que vai pro banco. Serve pra ilustrar por que o PedidoController não recebe a entidade direto.
 package com.deposito.dto;
 
 import lombok.Data;
